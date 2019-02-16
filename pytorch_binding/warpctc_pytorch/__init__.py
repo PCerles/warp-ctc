@@ -11,7 +11,7 @@ def _assert_no_grad(tensor):
         "gradients only computed for acts - please " \
         "mark other tensors as not requiring gradients"
 
-def _CTC(Function):
+class _CTC(Function):
     @staticmethod
     def forward(ctx, acts, labels, act_lens, label_lens, grads,
                 size_average=False,
