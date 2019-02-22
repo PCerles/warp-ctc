@@ -11,6 +11,7 @@ def _assert_no_grad(tensor):
         "gradients only computed for acts - please " \
         "mark other tensors as not requiring gradients"
 
+
 class _CTC(Function):
     @staticmethod
     def forward(ctx, acts, labels, act_lens, label_lens, grads,
@@ -86,5 +87,5 @@ class CTCLoss(Module):
                             self.size_average, self.length_average, self.blank)
         else:
             return self.ctc(acts, labels, act_lens, label_lens,
-                            torch.zeros(acts.size()).type_as(acts).to(acts.device),
+                            torch.zeros(acts.size()).type_as(acts),
                             self.size_average, self.length_average, self.blank)
