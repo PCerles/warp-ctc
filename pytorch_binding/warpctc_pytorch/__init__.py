@@ -19,6 +19,7 @@ class _CTC(Function):
                 length_average=False, blank=0):
         is_cuda = True if acts.is_cuda else False
         acts = acts.contiguous()
+
         loss_func = warp_ctc.gpu_ctc if is_cuda else warp_ctc.cpu_ctc
         minibatch_size = acts.size(1)
         costs = torch.zeros(minibatch_size).cpu()
@@ -42,6 +43,9 @@ class _CTC(Function):
             # Compute the avg. log-probability per batch sample.
             grads = grads / minibatch_size
             costs = costs / minibatch_size
+
+        for i in range(len(act_lens)):
+            grads[act_lens[i]:,i,:] = 0
 
         ctx.grads = grads
         return costs
@@ -80,7 +84,6 @@ class CTCLoss(Module):
         _assert_no_grad(labels)
         _assert_no_grad(act_lens)
         _assert_no_grad(label_lens)
-
         if self.reuse_acts:
             return self.ctc(acts, labels, act_lens, label_lens,
                             acts,
