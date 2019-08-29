@@ -18,7 +18,6 @@ class _CTC(Function):
                 size_average=False,
                 length_average=False, blank=0):
         is_cuda = True if acts.is_cuda else False
-        acts = acts.contiguous()
 
         loss_func = warp_ctc.gpu_ctc if is_cuda else warp_ctc.cpu_ctc
         minibatch_size = acts.size(1)
@@ -84,6 +83,7 @@ class CTCLoss(Module):
         _assert_no_grad(labels)
         _assert_no_grad(act_lens)
         _assert_no_grad(label_lens)
+        acts = acts.contiguous()
         if self.reuse_acts:
             return self.ctc(acts, labels, act_lens, label_lens,
                             acts,
